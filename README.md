@@ -1,0 +1,47 @@
+mailgun4s [![Build Status](https://secure.travis-ci.org/outr/mailgun4s.png?branch=master)](http://travis-ci.org/outr/mailgun4s)
+============
+
+Updated project originally forked from https://github.com/Nycto/mailgun-scala but since has been completely re-written.
+
+A Scala wrapper around the Mailgun API. Their documentation can
+be found here:
+
+http://documentation.mailgun.com
+
+Currently only supports sending messages, but more functionality will be added as needed or requested.
+
+Example
+-------
+
+The following example shows how to instantiate and send an email:
+
+```scala
+val mailgun = new Mailgun("samples.mailgun.org", "key-3ax6xnjp29jd6fds4gc373sgvjxteol0")
+val response = mailgun.send(Message.simple(
+  from = EmailAddress("nobody@example.com", "Test App"),
+  to = EmailAddress("mailgun-scala@mailinator.com", "Joe User"),
+  "Mailgun4s Rules!",
+  text = "This is the testing text",
+  html = "<html><b>This</b> <i>seems</i> <img src=\"cid:example.jpg\"/> to <h1>work!</h1></html>"
+).withInline(new File("example.jpg"), MediaType.`image/jpeg`))
+val result = Await.result(response, Duration.Inf)
+println(s"Result: $result")
+```
+
+Adding it to your Project
+-------------------------
+
+Add the following directives to your `build.sbt` file:
+
+```
+libraryDependencies ++= Seq(
+    "org.matthicks" %% "mailgun4s" % "1.0.0"
+)
+```
+
+License
+-------
+
+This library is released under the MIT License, which is pretty spiffy. You
+should have received a copy of the MIT License along with this program. If not,
+see <http://www.opensource.org/licenses/mit-license.php>.
