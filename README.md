@@ -16,6 +16,12 @@ Example
 The following example shows how to instantiate and send an email:
 
 ```scala
+import org.matthicks.mailgun._
+import java.io._
+import org.http4s.MediaType
+import scala.concurrent._
+import scala.concurrent.duration._
+
 val mailgun = new Mailgun("samples.mailgun.org", "key-3ax6xnjp29jd6fds4gc373sgvjxteol0")
 val response = mailgun.send(Message.simple(
   from = EmailAddress("nobody@example.com", "Test App"),
@@ -24,6 +30,7 @@ val response = mailgun.send(Message.simple(
   text = "This is the testing text",
   html = "<html><b>This</b> <i>seems</i> <img src=\"cid:example.jpg\"/> to <h1>work!</h1></html>"
 ).withInline(new File("example.jpg"), MediaType.`image/jpeg`))
+
 val result = Await.result(response, Duration.Inf)
 println(s"Result: $result")
 ```

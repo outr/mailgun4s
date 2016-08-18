@@ -19,8 +19,8 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   "com.outr.scribe" %% "scribe-slf4j" % "1.2.3",
-  "org.http4s" %% "http4s-blaze-client" % "0.14.2a",
-  "com.lihaoyi" %% "upickle" % "0.4.1"
+  "com.lihaoyi" %% "upickle" % "0.4.1",
+  "org.http4s" %% "http4s-blaze-client" % "0.14.2a"
 )
 
 pomExtra := <url>http://matthicks.org</url>

@@ -1,11 +1,9 @@
 package org.matthicks.mailgun
 
-import java.io.File
-
 import org.http4s.{Method, Uri}
 import org.http4s.multipart.{Multipart, Part}
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 import org.http4s._
 import org.http4s.client._
 import org.http4s.client.blaze.{defaultClient => client}
