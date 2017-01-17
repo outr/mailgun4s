@@ -10,7 +10,7 @@ package object mailgun {
 
     import scalaz.{\/-, -\/}
 
-    t.unsafePerformAsync {
+    t.runAsync {
       case -\/(ex) => {
         p.failure(ex)
         ()

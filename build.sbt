@@ -1,12 +1,10 @@
 name := "mailgun4s"
-
 organization := "org.matthicks"
+version := "1.0.1"
 
-version := "1.0.0"
-
-scalaVersion := "2.11.8"
-
-sbtVersion := "0.13.11"
+scalaVersion := "2.12.1"
+crossScalaVersions := List("2.12.1", "2.11.8")
+sbtVersion := "0.13.13"
 
 // Compiler flags
 scalacOptions ++= Seq("-deprecation", "-feature")
@@ -18,9 +16,9 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "com.outr.scribe" %% "scribe-slf4j" % "1.2.3",
-  "com.lihaoyi" %% "upickle" % "0.4.1",
-  "org.http4s" %% "http4s-blaze-client" % "0.14.2a"
+  "com.outr" %% "scribe-slf4j" % "1.3.2",
+  "com.lihaoyi" %% "upickle" % "0.4.4",
+  "org.http4s" %% "http4s-blaze-client" % "0.15.3"
 )
 
 pomExtra := <url>http://matthicks.org</url>
