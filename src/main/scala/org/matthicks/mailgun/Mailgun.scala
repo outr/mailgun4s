@@ -1,90 +1,95 @@
 package org.matthicks.mailgun
 
-import org.http4s.{Method, Uri}
-import org.http4s.multipart.{Multipart, Part}
+import gigahorse.Gigahorse
 
 import scala.concurrent.Future
-import org.http4s._
-import org.http4s.client._
-import org.http4s.client.blaze.{defaultClient => client}
-import org.http4s.headers._
 import upickle._
 
 class Mailgun(domain: String, apiKey: String) {
-  private val messagesURL = Uri.fromString(s"https://api.mailgun.net/v3/$domain/messages")
-    .getOrElse(throw new RuntimeException("Failed to parse URL"))
+  private val messagesURL = s"https://api.mailgun.net/v3/$domain/messages"
 
   def send(message: Message): Future[MessageResponse] = {
-    var parts = Vector[Part](
-      Part.formData("from", message.from.toString),
-      Part.formData("subject", message.subject)
-    )
-    def add(part: Part): Unit = {
-      parts = parts :+ part
+    var parts = Map.empty[String, List[String]]
+    def add(key: String, value: Any): Unit = {
+      parts += key -> List(value.toString)
     }
+    add("from", message.from)
+    add("subject", message.subject)
     message.to.foreach { to =>
-      add(Part.formData("to", to.toString))
+      add("to", to)
     }
     message.cc.foreach { cc =>
-      add(Part.formData("cc", cc.toString))
+      add("cc", cc)
     }
     message.bcc.foreach { bcc =>
-      add(Part.formData("bcc", bcc.toString))
+      add("bcc", bcc)
     }
     message.tags.foreach { tag =>
-      add(Part.formData("o:tag", tag))
+      add("o:tag", tag)
     }
     message.campaignId.foreach { campaignId =>
-      add(Part.formData("o:campaign", campaignId))
+      add("o:campaign", campaignId)
     }
     message.dkim.foreach { dkim =>
-      add(Part.formData("o:dkim", if (dkim) "yes" else "no"))
+      add("o:dkim", if (dkim) "yes" else "no")
     }
     message.deliveryTime.foreach { deliveryTime =>
-      add(Part.formData("o.deliverytime", deliveryTime))
+      add("o.deliverytime", deliveryTime)
     }
     if (message.testMode) {
-      add(Part.formData("o:testmode", "yes"))
+      add("o:testmode", "yes")
     }
     message.tracking.foreach { tracking =>
-      add(Part.formData("o:tracking", if (tracking) "yes" else "no"))
+      add("o:tracking", if (tracking) "yes" else "no")
     }
     message.trackingClicks match {
       case TrackingClicks.Default => // Nothing needs to be set
-      case TrackingClicks.Yes => add(Part.formData("o:tracking-clicks", "yes"))
-      case TrackingClicks.No => add(Part.formData("o:tracking-clicks", "no"))
-      case TrackingClicks.HTMLOnly => add(Part.formData("o:tracking-clicks", "htmlonly"))
+      case TrackingClicks.Yes => add("o:tracking-clicks", "yes")
+      case TrackingClicks.No => add("o:tracking-clicks", "no")
+      case TrackingClicks.HTMLOnly => add("o:tracking-clicks", "htmlonly")
     }
     message.trackingOpens.foreach { trackingOpens =>
-      add(Part.formData("o:tracking-opens", if (trackingOpens) "yes" else "no"))
+      add("o:tracking-opens", if (trackingOpens) "yes" else "no")
     }
     if (message.requireTLS) {
-      add(Part.formData("o:require-tls", "yes"))
+      add("o:require-tls", "yes")
     }
     if (message.skipVerification) {
-      add(Part.formData("o:skip-verification", "yes"))
+      add("o:skip-verification", "yes")
     }
     message.customHeaders.foreach {
-      case (key, value) => add(Part.formData(s"h:$key", value))
+      case (key, value) => add(s"h:$key", value)
     }
     message.customData.foreach {
-      case (key, value) => add(Part.formData(s"v:$key", value))
+      case (key, value) => add(s"v:$key", value)
     }
     message.text.foreach { text =>
-      add(Part.formData("text", text))
+      add("text", text)
     }
     message.html.foreach { text =>
-      add(Part.formData("html", text))
+      add("html", text)
     }
     message.inline.foreach { attachment =>
-      add(Part.fileData("attachment", attachment.url, `Content-Type`(attachment.mediaType)))
+//      add(Part.fileData("attachment", attachment.url, `Content-Type`(attachment.mediaType)))
+      throw new UnsupportedOperationException("Attachments not currently supported!")
     }
     message.inline.foreach { inline =>
-      add(Part.fileData("inline", inline.url, `Content-Type`(inline.mediaType)))
+//      add(Part.fileData("inline", inline.url, `Content-Type`(inline.mediaType)))
+      throw new UnsupportedOperationException("Inline Attachments not currently supported!")
     }
-    val multipart = Multipart(parts)
-    val request = Method.POST(messagesURL, multipart)
-      .map(_.replaceAllHeaders(multipart.headers).putHeaders(Authorization(BasicCredentials("api", apiKey))))
-    client.expect[String](request).map(default.read[MessageResponse])
+
+    val client = Gigahorse.http(Gigahorse.config)
+    try {
+      val request = Gigahorse
+        .url(messagesURL)
+        .post(parts)
+        .withAuth("api", apiKey)
+      client.run(request, Gigahorse.asString.andThen(default.read[MessageResponse]))
+    } catch {
+      case t: Throwable => {
+        client.close()
+        throw t
+      }
+    }
   }
 }

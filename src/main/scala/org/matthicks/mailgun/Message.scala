@@ -3,8 +3,6 @@ package org.matthicks.mailgun
 import java.io.File
 import java.net.URL
 
-import org.http4s.MediaType
-
 case class Message(from: EmailAddress,
                    to: List[EmailAddress] = Nil,
                    subject: String,
@@ -26,11 +24,11 @@ case class Message(from: EmailAddress,
                    skipVerification: Boolean = false,
                    customHeaders: Map[String, String] = Map.empty,
                    customData: Map[String, String] = Map.empty) {
-  def withInline(url: URL, mediaType: MediaType): Message = {
-    copy(inline = Attachment(url, mediaType) :: inline)
+  def withInline(url: URL, contentType: String): Message = {
+    copy(inline = Attachment(url, contentType) :: inline)
   }
-  def withInline(file: File, mediaType: MediaType): Message = {
-    copy(inline = Attachment(file, mediaType) :: inline)
+  def withInline(file: File, contentType: String): Message = {
+    copy(inline = Attachment(file, contentType) :: inline)
   }
 }
 

@@ -1,6 +1,6 @@
 name := "mailgun4s"
 organization := "org.matthicks"
-version := "1.0.1"
+version := "1.0.2"
 
 scalaVersion := "2.12.1"
 crossScalaVersions := List("2.12.1", "2.11.8")
@@ -18,7 +18,7 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "com.outr" %% "scribe-slf4j" % "1.3.2",
   "com.lihaoyi" %% "upickle" % "0.4.4",
-  "org.http4s" %% "http4s-blaze-client" % "0.15.3"
+  "com.eed3si9n" %% "gigahorse-core" % "0.2-SNAPSHOT"
 )
 
 pomExtra := <url>http://matthicks.org</url>
