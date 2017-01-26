@@ -1,6 +1,6 @@
 package org.matthicks.mailgun
 
-import gigahorse.Gigahorse
+import gigahorse.support.asynchttpclient.Gigahorse
 
 import scala.concurrent.Future
 import upickle._
