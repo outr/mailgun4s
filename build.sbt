@@ -1,6 +1,6 @@
 name := "mailgun4s"
 organization := "org.matthicks"
-version := "1.0.3"
+version := "1.0.4"
 
 scalaVersion := "2.12.1"
 crossScalaVersions := List("2.12.1", "2.11.8")
@@ -16,9 +16,7 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "com.outr" %% "scribe-slf4j" % "1.3.2",
   "com.lihaoyi" %% "upickle" % "0.4.4",
-  "com.eed3si9n" %% "gigahorse-core" % "0.2.0",
   "com.eed3si9n" %% "gigahorse-asynchttpclient" % "0.2.0"
 )
 
