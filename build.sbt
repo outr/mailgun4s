@@ -1,10 +1,9 @@
 name := "mailgun4s"
 organization := "org.matthicks"
-version := "1.0.4"
+version := "1.0.5-SNAPSHOT"
 
-scalaVersion := "2.12.1"
-crossScalaVersions := List("2.12.1", "2.11.8")
-sbtVersion := "0.13.13"
+scalaVersion := "2.12.3"
+crossScalaVersions := List("2.12.3", "2.11.11")
 
 // Compiler flags
 scalacOptions ++= Seq("-deprecation", "-feature")
@@ -15,9 +14,10 @@ resolvers ++= Seq(
   Resolver.typesafeRepo("releases")
 )
 
+fork in run := true
+
 libraryDependencies ++= Seq(
-  "com.lihaoyi" %% "upickle" % "0.4.4",
-  "com.eed3si9n" %% "gigahorse-asynchttpclient" % "0.2.0"
+  "io.youi" %% "youi-client" % "0.5.2-SNAPSHOT"
 )
 
 pomExtra := <url>http://matthicks.org</url>

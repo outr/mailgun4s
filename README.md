@@ -1,5 +1,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/be6b2c52582c469ca0092cde7893b909)](https://www.codacy.com/app/matthicks/mailgun4s?utm_source=github.com&utm_medium=referral&utm_content=outr/mailgun4s&utm_campaign=badger)
-mailgun4s [![Build Status](https://secure.travis-ci.org/outr/mailgun4s.png?branch=master)](http://travis-ci.org/outr/mailgun4s)
+[![Build Status](https://secure.travis-ci.org/outr/mailgun4s.png?branch=master)](http://travis-ci.org/outr/mailgun4s)
+
+mailgun4s 
 ============
 
 Updated project originally forked from https://github.com/Nycto/mailgun-scala but since has been completely re-written.
