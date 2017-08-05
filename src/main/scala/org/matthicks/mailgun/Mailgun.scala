@@ -114,16 +114,3 @@ class Mailgun(domain: String, apiKey: String, saveDirectory: File = new File(Sys
     }*/
   }
 }
-
-object Mailgun {
-  def main(args: Array[String]): Unit = {
-    val mg = new Mailgun(domain = "zooxoos.com", apiKey = "key-dcf232baa339f1d193e16ad38d6e72d2")
-    val future = mg.send(Message(
-      from = EmailAddress("matt@zooxoos.com", "ZOOXOOS"),
-      to = List(EmailAddress("matt@outr.com", "Matt Hicks")),
-      subject = "This is a test!",
-      text = Some("This is a test message!")
-    ))
-    scribe.info(Await.result(future, 30.seconds))
-  }
-}
