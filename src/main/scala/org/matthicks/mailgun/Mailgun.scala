@@ -4,15 +4,20 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Base64
 
+import io.circe._
+import io.circe.generic.extras.Configuration
+import io.circe.generic.extras.semiauto._
 import io.youi.client.HttpClient
-import io.youi.http.{Content, Headers, HttpRequest, Method}
+import io.youi.http.{Content, FileContent, Headers, HttpRequest, Method, StringContent}
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import io.youi.net._
+import org.powerscala.io.IO
 
 class Mailgun(domain: String, apiKey: String, saveDirectory: File = new File(System.getProperty("java.io.tmpdir"))) {
+  private implicit val customConfig: Configuration = Configuration.default.withSnakeCaseKeys.withDefaults
+
   private lazy val client = new HttpClient(saveDirectory)
 
   private val messagesURL = URL(s"https://api.mailgun.net/v3/$domain/messages")
@@ -95,8 +100,22 @@ class Mailgun(domain: String, apiKey: String, saveDirectory: File = new File(Sys
       .withHeader(Headers.Request.Authorization(s"Basic $encodedKey"))
     val request = HttpRequest(Method.Post, url = messagesURL, headers = headers, content = Some(content))
     client.send(request).map { response =>
-      scribe.info(s"Response: ${response.content}")
-      MessageResponse("test", "test")
+      val responseJson = response.content.map {
+        case c: StringContent => c.value
+        case c: FileContent => IO.stream(c.file, new StringBuilder).toString
+        case c => throw new RuntimeException(s"$c not supported")
+      }.getOrElse("")
+      if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for $messagesURL.")
+      parser.parse(responseJson) match {
+        case Left(error) => throw new RuntimeException(s"Failed to parse JSON response: $responseJson", error)
+        case Right(json) => {
+          val responseDecoder: Decoder[MessageResponse] = deriveDecoder[MessageResponse]
+          responseDecoder.decodeJson(json) match {
+            case Left(error) => throw new RuntimeException(s"Failed to convert JSON response to MessageResponse: $responseJson", error)
+            case Right(result) => result
+          }
+        }
+      }
     }
   }
 
