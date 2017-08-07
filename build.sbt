@@ -1,6 +1,6 @@
 name := "mailgun4s"
 organization := "org.matthicks"
-version := "1.0.5-SNAPSHOT"
+version := "1.0.5"
 
 scalaVersion := "2.12.3"
 crossScalaVersions := List("2.12.3", "2.11.11")
@@ -17,7 +17,7 @@ resolvers ++= Seq(
 fork in run := true
 
 libraryDependencies ++= Seq(
-  "io.youi" %% "youi-client" % "0.5.2-SNAPSHOT"
+  "io.youi" %% "youi-client" % "0.5.2"
 )
 
 pomExtra := <url>http://matthicks.org</url>

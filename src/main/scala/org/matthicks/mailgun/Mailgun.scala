@@ -7,15 +7,15 @@ import java.util.Base64
 import io.youi.client.HttpClient
 import io.youi.http.{Content, Headers, HttpRequest, Method}
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration._
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+
 import io.youi.net._
 
 class Mailgun(domain: String, apiKey: String, saveDirectory: File = new File(System.getProperty("java.io.tmpdir"))) {
   private lazy val client = new HttpClient(saveDirectory)
 
-  private val messagesURL = url"https://api.mailgun.net/v3/$domain/messages"
+  private val messagesURL = URL(s"https://api.mailgun.net/v3/$domain/messages")
 
   def send(message: Message): Future[MessageResponse] = {
     var content = Content.form
@@ -89,7 +89,7 @@ class Mailgun(domain: String, apiKey: String, saveDirectory: File = new File(Sys
       content = content.withFile("inline", inline.file.getName, inline.file, Headers.empty.withHeader(contentType))
     }
 
-    val encodedKey = Base64.getEncoder.encode(s"api:$apiKey".getBytes(StandardCharsets.UTF_8))
+    val encodedKey = new String(Base64.getEncoder.encode(s"api:$apiKey".getBytes(StandardCharsets.UTF_8)), "utf-8")
     val headers = Headers
       .empty
       .withHeader(Headers.Request.Authorization(s"Basic $encodedKey"))
@@ -98,19 +98,7 @@ class Mailgun(domain: String, apiKey: String, saveDirectory: File = new File(Sys
       scribe.info(s"Response: ${response.content}")
       MessageResponse("test", "test")
     }
-
-    /*val client = Gigahorse.http(Gigahorse.config)
-    try {
-      val request = Gigahorse
-        .url(messagesURL)
-        .post(parts)
-        .withAuth("api", apiKey)
-      client.run(request, Gigahorse.asString.andThen(default.read[MessageResponse]))
-    } catch {
-      case t: Throwable => {
-        client.close()
-        throw t
-      }
-    }*/
   }
+
+  def dispose(): Unit = client.dispose()
 }
