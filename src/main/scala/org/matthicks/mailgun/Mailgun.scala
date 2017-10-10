@@ -85,7 +85,7 @@ class Mailgun(domain: String, apiKey: String, saveDirectory: File = new File(Sys
     message.html.foreach { text =>
       add("html", text)
     }
-    message.inline.foreach { attachment =>
+    message.attachments.foreach { attachment =>
       val contentType = Headers.`Content-Type`(ContentType.byFileName(attachment.file.getName))
       content = content.withFile("attachment", attachment.file.getName, attachment.file, Headers.empty.withHeader(contentType))
     }
