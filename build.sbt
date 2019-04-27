@@ -1,9 +1,9 @@
 name := "mailgun4s"
 organization := "org.matthicks"
-version := "1.0.9"
+version := "1.0.10-SNAPSHOT"
 
-scalaVersion := "2.12.3"
-crossScalaVersions := List("2.12.3", "2.11.11")
+scalaVersion := "2.12.8"
+crossScalaVersions := List("2.12.8", "2.11.12")
 
 // Compiler flags
 scalacOptions ++= Seq("-deprecation", "-feature")
@@ -17,26 +17,21 @@ resolvers ++= Seq(
 fork in run := true
 
 libraryDependencies ++= Seq(
-  "io.youi" %% "youi-client" % "0.7.3"
+  "io.youi" %% "youi-client" % "0.10.14"
 )
 
-pomExtra := <url>http://matthicks.org</url>
-  <licenses>
-    <license>
-      <name>MIT License</name>
-      <url>http://www.opensource.org/licenses/mit-license.php</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <scm>
-    <developerConnection>scm:https://github.com/outr/mailgun4s.git</developerConnection>
-    <connection>scm:https://github.com/outr/mailgun4s.git</connection>
-    <url>https://github.com/outr/mailgun4s</url>
-  </scm>
-  <developers>
-    <developer>
-      <id>darkfrog26</id>
-      <name>Matt Hicks</name>
-      <url>http://www.matthicks.com</url>
-    </developer>
-  </developers>
+publishTo in ThisBuild := sonatypePublishTo.value
+sonatypeProfileName in ThisBuild := "org.matthicks"
+publishMavenStyle in ThisBuild := true
+licenses in ThisBuild := Seq("MIT" -> url("https://github.com/outr/mailgun4s/blob/master/LICENSE"))
+sonatypeProjectHosting in ThisBuild := Some(xerial.sbt.Sonatype.GitHubHosting("outr", "mailgun4s", "matt@outr.com"))
+homepage in ThisBuild := Some(url("https://github.com/outr/mailgun4s"))
+scmInfo in ThisBuild := Some(
+  ScmInfo(
+    url("https://github.com/outr/mailgun4s"),
+    "scm:git@github.com:outr/mailgun4s.git"
+  )
+)
+developers in ThisBuild := List(
+  Developer(id="darkfrog", name="Matt Hicks", email="matt@matthicks.com", url=url("http://matthicks.com"))
+)
