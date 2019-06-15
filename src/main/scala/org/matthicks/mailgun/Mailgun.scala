@@ -15,16 +15,13 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import io.youi.net._
 
-class Mailgun(domain: String, apiKey: String, regionOpt: Option[String] = None) {
+class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
   private implicit val customConfig: Configuration = Configuration.default.withSnakeCaseMemberNames.withDefaults
-  private val regionDomain = regionOpt match {
-    case Some(region) => s"https://api.$region.mailgun.net/v3/$domain/messages"
-    case None => s"https://api.mailgun.net/v3/$domain/messages"
-  }
+  private lazy val url: URL = URL(s"https://api.${region.map(r => s"$r.").getOrElse("")}mailgun.net/v3/$domain/messages")
 
   private lazy val encodedKey = new String(Base64.getEncoder.encode(s"api:$apiKey".getBytes(StandardCharsets.UTF_8)), "utf-8")
   private lazy val client = HttpClient
-    .url(URL(regionDomain))
+    .url(url)
     .post
     .header(Headers.Request.Authorization(s"Basic $encodedKey"))
 
