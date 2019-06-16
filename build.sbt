@@ -1,6 +1,6 @@
 name := "mailgun4s"
 organization := "org.matthicks"
-version := "1.0.12-SNAPSHOT"
+version := "1.0.12"
 
 scalaVersion := "2.12.8"
 crossScalaVersions := List("2.12.8", "2.11.12")
