@@ -1,6 +1,6 @@
 name := "mailgun4s"
 organization := "org.matthicks"
-version := "1.0.11"
+version := "1.0.12-SNAPSHOT"
 
 scalaVersion := "2.12.8"
 crossScalaVersions := List("2.12.8", "2.11.12")
@@ -17,7 +17,7 @@ resolvers ++= Seq(
 fork in run := true
 
 libraryDependencies ++= Seq(
-  "io.youi" %% "youi-client" % "0.10.14"
+  "io.youi" %% "youi-client" % "0.11.6"
 )
 
 publishTo in ThisBuild := sonatypePublishTo.value
