@@ -8,19 +8,22 @@ import io.circe._
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto._
 import io.youi.client.HttpClient
-import io.youi.http.{Content, FileContent, Headers, HttpRequest, Method, StringContent}
+import io.youi.http.content.Content
+import io.youi.http.Headers
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import io.youi.net._
-import org.powerscala.io.IO
 
-class Mailgun(domain: String, apiKey: String, saveDirectory: File = new File(System.getProperty("java.io.tmpdir"))) {
-  private implicit val customConfig: Configuration = Configuration.default.withSnakeCaseKeys.withDefaults
+class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
+  private implicit val customConfig: Configuration = Configuration.default.withSnakeCaseMemberNames.withDefaults
+  private lazy val url: URL = URL(s"https://api.${region.map(r => s"$r.").getOrElse("")}mailgun.net/v3/$domain/messages")
 
-  private lazy val client = new HttpClient(saveDirectory)
-
-  private val messagesURL = URL(s"https://api.mailgun.net/v3/$domain/messages")
+  private lazy val encodedKey = new String(Base64.getEncoder.encode(s"api:$apiKey".getBytes(StandardCharsets.UTF_8)), "utf-8")
+  private lazy val client = HttpClient
+    .url(url)
+    .post
+    .header(Headers.Request.Authorization(s"Basic $encodedKey"))
 
   def send(message: Message): Future[MessageResponse] = {
     var content = Content.form
@@ -94,30 +97,22 @@ class Mailgun(domain: String, apiKey: String, saveDirectory: File = new File(Sys
       content = content.withFile("inline", inline.file.getName, inline.file, Headers.empty.withHeader(contentType))
     }
 
-    val encodedKey = new String(Base64.getEncoder.encode(s"api:$apiKey".getBytes(StandardCharsets.UTF_8)), "utf-8")
-    val headers = Headers
-      .empty
-      .withHeader(Headers.Request.Authorization(s"Basic $encodedKey"))
-    val request = HttpRequest(Method.Post, url = messagesURL, headers = headers, content = Some(content))
-    client.send(request).map { response =>
-      val responseJson = response.content.map {
-        case c: StringContent => c.value
-        case c: FileContent => IO.stream(c.file, new StringBuilder).toString
-        case c => throw new RuntimeException(s"$c not supported")
-      }.getOrElse("")
-      if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for $messagesURL.")
-      parser.parse(responseJson) match {
-        case Left(error) => throw new RuntimeException(s"Failed to parse JSON response: $responseJson", error)
-        case Right(json) => {
-          val responseDecoder: Decoder[MessageResponse] = deriveDecoder[MessageResponse]
-          responseDecoder.decodeJson(json) match {
-            case Left(error) => throw new RuntimeException(s"Failed to convert JSON response to MessageResponse: $responseJson", error)
-            case Right(result) => result
+    client
+      .content(content)
+      .send()
+      .map { response =>
+        val responseJson = response.content.map(_.asString).getOrElse("")
+        if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for ${client.url}.")
+        parser.parse(responseJson) match {
+          case Left(error) => throw new RuntimeException(s"Failed to parse JSON response: $responseJson", error)
+          case Right(json) => {
+            val responseDecoder: Decoder[MessageResponse] = deriveDecoder[MessageResponse]
+            responseDecoder.decodeJson(json) match {
+              case Left(error) => throw new RuntimeException(s"Failed to convert JSON response to MessageResponse: $responseJson", error)
+              case Right(result) => result
+            }
           }
         }
       }
-    }
   }
-
-  def dispose(): Unit = client.dispose()
 }
