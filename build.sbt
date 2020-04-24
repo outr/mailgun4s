@@ -1,6 +1,6 @@
 name := "mailgun4s"
 organization := "org.matthicks"
-version := "1.0.14-SNAPSHOT"
+version := "1.0.14"
 
 scalaVersion := "2.13.1"
 crossScalaVersions := List("2.13.1", "2.12.11")
@@ -27,5 +27,5 @@ developers in ThisBuild := List(
 fork in run := true
 
 libraryDependencies ++= Seq(
-  "io.youi" %% "youi-client" % "0.13.1"
+  "io.youi" %% "youi-client" % "0.13.2"
 )
