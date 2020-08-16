@@ -108,13 +108,12 @@ class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
         if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for ${client.url}.")
         parser.parse(responseJson) match {
           case Left(error) => throw new RuntimeException(s"Failed to parse JSON response: $responseJson", error)
-          case Right(json) => {
-            val responseDecoder: Decoder[MessageResponse] = deriveDecoder[MessageResponse]
+          case Right(json) =>
+            val responseDecoder: Decoder[MessageResponse] = deriveConfiguredDecoder[MessageResponse]
             responseDecoder.decodeJson(json) match {
               case Left(error) => throw new RuntimeException(s"Failed to convert JSON response to MessageResponse: $responseJson", error)
               case Right(result) => result
             }
-          }
         }
       }
   }
