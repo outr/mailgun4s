@@ -1,9 +1,9 @@
 name := "mailgun4s"
 organization := "org.matthicks"
-version := "1.0.14"
+version := "1.0.15"
 
-scalaVersion := "2.13.1"
-crossScalaVersions := List("2.13.1", "2.12.11")
+scalaVersion := "2.13.3"
+crossScalaVersions := List("2.13.3", "2.12.12")
 
 // Compiler flags
 scalacOptions ++= Seq("-deprecation", "-feature")
@@ -27,5 +27,5 @@ developers in ThisBuild := List(
 fork in run := true
 
 libraryDependencies ++= Seq(
-  "io.youi" %% "youi-client" % "0.13.2"
+  "io.youi" %% "youi-client" % "0.13.16"
 )
