@@ -27,10 +27,10 @@ import scala.concurrent.duration._
 val mailgun = new Mailgun("samples.mailgun.org", "key-YOUR-MAILGUN-KEY")
 val response = mailgun.send(Message.simple(
   from = EmailAddress("nobody@example.com", "Test App"),
-  to = EmailAddress("mailgun-scala@mailinator.com", "Joe User"),
-  "Mailgun4s Rules!",
-  text = "This is the testing text",
-  html = "<html><b>This</b> <i>seems</i> <img src=\"cid:example.jpg\"/> to <h1>work!</h1></html>"
+  to = List(EmailAddress("mailgun-scala@mailinator.com", "Joe User")),
+  subject = "Mailgun4s Rules!",
+  text = Some("This is the testing text"),
+  html = Some("<html><b>This</b> <i>seems</i> <img src=\"cid:example.jpg\"/> to <h1>work!</h1></html>")
 ).withInline(new File("example.jpg"), "image/jpeg"))
 
 val result = Await.result(response, Duration.Inf)
@@ -44,7 +44,7 @@ Add the following directives to your `build.sbt` file:
 
 ```
 libraryDependencies ++= Seq(
-    "org.matthicks" %% "mailgun4s" % "1.0.15"
+    "org.matthicks" %% "mailgun4s" % "1.0.16"
 )
 ```
 
