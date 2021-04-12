@@ -1,12 +1,10 @@
 package org.matthicks.mailgun
 
-import java.io.File
+import fabric.parse._
+import fabric.rw._
+
 import java.nio.charset.StandardCharsets
 import java.util.Base64
-
-import io.circe._
-import io.circe.generic.extras.Configuration
-import io.circe.generic.extras.semiauto._
 import io.youi.client.HttpClient
 import io.youi.http.content.Content
 import io.youi.http.Headers
@@ -16,7 +14,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import io.youi.net._
 
 class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
-  private implicit val customConfig: Configuration = Configuration.default.withSnakeCaseMemberNames.withDefaults
   private lazy val url: URL = URL(s"https://api.${region.map(r => s"$r.").getOrElse("")}mailgun.net/v3/$domain/messages")
 
   private lazy val encodedKey = new String(Base64.getEncoder.encode(s"api:$apiKey".getBytes(StandardCharsets.UTF_8)), "utf-8")
@@ -103,16 +100,7 @@ class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
       .map { response =>
         val responseJson = response.content.map(_.asString).getOrElse("")
         if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for ${client.url}.")
-        parser.parse(responseJson) match {
-          case Left(error) => throw new RuntimeException(s"Failed to parse JSON response: $responseJson", error)
-          case Right(json) => {
-            val responseDecoder: Decoder[MessageResponse] = deriveDecoder[MessageResponse]
-            responseDecoder.decodeJson(json) match {
-              case Left(error) => throw new RuntimeException(s"Failed to convert JSON response to MessageResponse: $responseJson", error)
-              case Right(result) => result
-            }
-          }
-        }
+        Json.parse(responseJson).as[MessageResponse]
       }
   }
 }

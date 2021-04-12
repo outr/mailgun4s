@@ -1,7 +1,8 @@
 package org.matthicks.mailgun
 
+import fabric.rw._
+
 import java.io.File
-import java.net.URL
 
 case class Message(from: EmailAddress,
                    to: List[EmailAddress] = Nil,
@@ -30,6 +31,8 @@ case class Message(from: EmailAddress,
 }
 
 object Message {
+  implicit val rw: ReaderWriter[Message] = ccRW
+
   def simple(from: EmailAddress,
              to: EmailAddress,
              subject: String,

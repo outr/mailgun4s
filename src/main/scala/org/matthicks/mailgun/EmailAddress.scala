@@ -1,5 +1,7 @@
 package org.matthicks.mailgun
 
+import fabric.rw._
+
 case class EmailAddress(address: String, name: Option[String] = None) {
   override def toString: String = name match {
     case Some(n) => s"$n <$address>"
@@ -8,5 +10,7 @@ case class EmailAddress(address: String, name: Option[String] = None) {
 }
 
 object EmailAddress {
+  implicit val rw: ReaderWriter[EmailAddress] = ccRW
+
   def apply(address: String, name: String): EmailAddress = EmailAddress(address, Option(name))
 }
