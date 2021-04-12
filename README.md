@@ -44,7 +44,7 @@ Add the following directives to your `build.sbt` file:
 
 ```
 libraryDependencies ++= Seq(
-    "org.matthicks" %% "mailgun4s" % "1.0.13"
+    "org.matthicks" %% "mailgun4s" % "1.0.15"
 )
 ```
 

@@ -79,6 +79,9 @@ class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
     message.customData.foreach {
       case (key, value) => add(s"v:$key", value)
     }
+    message.template.foreach { template =>
+      add("template", template)
+    }
     message.text.foreach { text =>
       add("text", text)
     }
