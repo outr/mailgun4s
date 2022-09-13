@@ -16,16 +16,18 @@ Currently only supports sending messages, but more functionality will be added a
 Example
 -------
 
+Note that as of 1.1, we now use [cats-effect](https://typelevel.org/cats-effect/) instead of Futures.
+
 The following example shows how to instantiate and send an email:
 
 ```scala
 import org.matthicks.mailgun._
 import java.io._
 import scala.concurrent._
-import scala.concurrent.duration._
+import cats.effect.IO
 
 val mailgun = new Mailgun("samples.mailgun.org", "key-YOUR-MAILGUN-KEY")
-val response = mailgun.send(Message.simple(
+val io: IO[MessageResponse] = mailgun.send(Message.simple(
   from = EmailAddress("nobody@example.com", "Test App"),
   to = List(EmailAddress("mailgun-scala@mailinator.com", "Joe User")),
   subject = "Mailgun4s Rules!",
@@ -33,8 +35,9 @@ val response = mailgun.send(Message.simple(
   html = Some("<html><b>This</b> <i>seems</i> <img src=\"cid:example.jpg\"/> to <h1>work!</h1></html>")
 ).withInline(new File("example.jpg"), "image/jpeg"))
 
-val result = Await.result(response, Duration.Inf)
-println(s"Result: $result")
+io.map { result =>
+  println(s"Result: $result")
+}
 ```
 
 Adding it to your Project
@@ -44,7 +47,7 @@ Add the following directives to your `build.sbt` file:
 
 ```
 libraryDependencies ++= Seq(
-    "org.matthicks" %% "mailgun4s" % "1.0.16"
+    "org.matthicks" %% "mailgun4s" % "1.1.0"
 )
 ```
 

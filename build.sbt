@@ -1,6 +1,6 @@
 name := "mailgun4s"
-organization := "org.matthicks"
-version := "1.1.0-SNAPSHOT"
+organization := "com.outr"
+version := "1.1.0"
 
 scalaVersion := "2.13.8"
 crossScalaVersions := List("2.13.8", "2.12.16")
@@ -8,6 +8,8 @@ crossScalaVersions := List("2.13.8", "2.12.16")
 // Compiler flags
 scalacOptions ++= Seq("-deprecation", "-feature")
 
+ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
+ThisBuild / sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
 ThisBuild / publishTo := sonatypePublishTo.value
 ThisBuild / sonatypeProfileName := "com.outr"
 ThisBuild / publishMavenStyle := true
