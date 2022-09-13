@@ -1,6 +1,6 @@
 name := "mailgun4s"
 organization := "org.matthicks"
-version := "1.0.19-SNAPSHOT"
+version := "1.1.0-SNAPSHOT"
 
 scalaVersion := "2.13.8"
 crossScalaVersions := List("2.13.8", "2.12.16")
@@ -27,5 +27,5 @@ ThisBuild / developers := List(
 run / fork := true
 
 libraryDependencies ++= Seq(
-  "io.youi" %% "youi-client" % "0.14.4"
+  "com.outr" %% "spice-client-okhttp" % "0.0.1"
 )

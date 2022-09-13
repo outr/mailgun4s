@@ -1,19 +1,23 @@
 package org.matthicks.mailgun
 
+import cats.effect.IO
 import fabric.parse._
 import fabric.rw._
+import moduload.Moduload
 
 import java.nio.charset.StandardCharsets
 import java.util.Base64
-import io.youi.client.HttpClient
-import io.youi.http.content.Content
-import io.youi.http.Headers
+import spice.http.client.HttpClient
+import spice.http.content.Content
+import spice.http.Headers
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
-import io.youi.net._
+import spice.net._
+
+import scala.util.{Failure, Success}
 
 class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
+  Moduload.load()
+
   private lazy val url: URL = URL(s"https://api.${region.map(r => s"$r.").getOrElse("")}mailgun.net/v3/$domain/messages")
 
   private lazy val encodedKey = new String(Base64.getEncoder.encode(s"api:$apiKey".getBytes(StandardCharsets.UTF_8)), "utf-8")
@@ -22,7 +26,7 @@ class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
     .post
     .header(Headers.Request.Authorization(s"Basic $encodedKey"))
 
-  def send(message: Message): Future[MessageResponse] = {
+  def send(message: Message): IO[MessageResponse] = {
     var content = Content.form
 
     def add(key: String, value: Any): Unit = {
@@ -100,10 +104,12 @@ class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
     client
       .content(content)
       .send()
-      .map { response =>
-        val responseJson = response.content.map(_.asString).getOrElse("")
-        if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for ${client.url}.")
-        Json.parse(responseJson).as[MessageResponse]
+      .map {
+        case Success(response) =>
+          val responseJson = response.content.map(_.asString).getOrElse("")
+          if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for ${client.url}.")
+          JsonParser.parse(responseJson).as[MessageResponse]
+        case Failure(exception) => throw exception
       }
   }
 }
