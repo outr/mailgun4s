@@ -10,7 +10,7 @@ case class EmailAddress(address: String, name: Option[String] = None) {
 }
 
 object EmailAddress {
-  implicit val rw: ReaderWriter[EmailAddress] = ccRW
+  implicit val rw: RW[EmailAddress] = RW.gen
 
   def apply(address: String, name: String): EmailAddress = EmailAddress(address, Option(name))
 }

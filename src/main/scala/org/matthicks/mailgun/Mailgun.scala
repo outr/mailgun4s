@@ -1,7 +1,7 @@
 package org.matthicks.mailgun
 
 import cats.effect.IO
-import fabric.parse._
+import fabric.io.JsonParser
 import fabric.rw._
 import moduload.Moduload
 
@@ -10,7 +10,6 @@ import java.util.Base64
 import spice.http.client.HttpClient
 import spice.http.content.Content
 import spice.http.Headers
-
 import spice.net._
 
 import scala.util.{Failure, Success}
@@ -108,7 +107,7 @@ class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
         case Success(response) =>
           val responseJson = response.content.map(_.asString).getOrElse("")
           if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for ${client.url}.")
-          JsonParser.parse(responseJson).as[MessageResponse]
+          JsonParser(responseJson).as[MessageResponse]
         case Failure(exception) => throw exception
       }
   }

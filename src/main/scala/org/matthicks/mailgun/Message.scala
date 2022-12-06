@@ -32,7 +32,7 @@ case class Message(from: EmailAddress,
 }
 
 object Message {
-  implicit val rw: ReaderWriter[Message] = ccRW
+  implicit val rw: RW[Message] = RW.gen
 
   def simple(from: EmailAddress,
              to: EmailAddress,
