@@ -17,7 +17,7 @@ import scala.util.{Failure, Success}
 class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
   Moduload.load()
 
-  private lazy val url: URL = URL(s"https://api.${region.map(r => s"$r.").getOrElse("")}mailgun.net/v3/$domain/messages")
+  private lazy val url: URL = URL.parse(s"https://api.${region.map(r => s"$r.").getOrElse("")}mailgun.net/v3/$domain/messages")
 
   private lazy val encodedKey = new String(Base64.getEncoder.encode(s"api:$apiKey".getBytes(StandardCharsets.UTF_8)), "utf-8")
   private lazy val client = HttpClient
