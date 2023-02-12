@@ -28,5 +28,5 @@ ThisBuild / developers := List(
 run / fork := true
 
 libraryDependencies ++= Seq(
-  "com.outr" %% "spice-client-okhttp" % "0.0.7"
+  "com.outr" %% "spice-client-okhttp" % "0.0.16"
 )
