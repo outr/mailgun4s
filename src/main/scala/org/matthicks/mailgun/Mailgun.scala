@@ -102,11 +102,13 @@ class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
 
     client
       .content(content)
-      .send()
-      .map { response =>
-        val responseJson = response.content.map(_.asString).getOrElse("")
-        if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for ${client.url}.")
-        JsonParser(responseJson).as[MessageResponse]
+      .sendTry()
+      .map {
+        case Success(response) =>
+          val responseJson = response.content.map(_.asString).getOrElse("")
+          if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for ${client.url}.")
+          JsonParser(responseJson).as[MessageResponse]
+        case Failure(exception) => throw exception
       }
   }
 }
