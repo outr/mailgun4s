@@ -8,7 +8,7 @@ import moduload.Moduload
 import java.nio.charset.StandardCharsets
 import java.util.Base64
 import spice.http.client.HttpClient
-import spice.http.content.Content
+import spice.http.content.{Content, FormDataContent}
 import spice.http.Headers
 import spice.net._
 
@@ -26,7 +26,7 @@ class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
     .header(Headers.Request.Authorization(s"Basic $encodedKey"))
 
   def send(message: Message): IO[MessageResponse] = {
-    var content = Content.form
+    var content: FormDataContent = FormDataContent
 
     def add(key: String, value: Any): Unit = {
       content = content.withString(key, value.toString)
@@ -103,12 +103,16 @@ class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
     client
       .content(content)
       .sendTry()
-      .map {
+      .flatMap {
         case Success(response) =>
-          val responseJson = response.content.map(_.asString).getOrElse("")
-          if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for ${client.url}.")
-          JsonParser(responseJson).as[MessageResponse]
-        case Failure(exception) => throw exception
+          (response.content match {
+            case Some(content) => content.asString
+            case None => IO.pure("")
+          }).map { responseJson =>
+            if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for ${client.url}.")
+            JsonParser(responseJson).as[MessageResponse]
+          }
+        case Failure(exception) => IO.raiseError(exception)
       }
   }
 }
