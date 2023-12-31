@@ -28,5 +28,5 @@ ThisBuild / developers := List(
 run / fork := true
 
 libraryDependencies ++= Seq(
-  "com.outr" %% "spice-client-jvm" % "0.4.0"
+  "com.outr" %% "spice-client-jvm" % "0.4.1"
 )
