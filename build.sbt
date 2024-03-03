@@ -3,7 +3,7 @@ organization := "com.outr"
 version := "1.2.3"
 
 scalaVersion := "2.13.12"
-crossScalaVersions := List("2.13.12", "3.3.1")
+crossScalaVersions := List("2.13.12", "3.3.3")
 
 // Compiler flags
 scalacOptions ++= Seq("-deprecation", "-feature")
