@@ -2,8 +2,8 @@ name := "mailgun4s"
 organization := "com.outr"
 version := "1.2.3"
 
-scalaVersion := "2.13.12"
-crossScalaVersions := List("2.13.12", "3.3.1")
+scalaVersion := "2.13.14"
+crossScalaVersions := List("2.13.14", "3.3.1")
 
 // Compiler flags
 scalacOptions ++= Seq("-deprecation", "-feature")
