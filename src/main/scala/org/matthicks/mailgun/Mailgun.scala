@@ -1,9 +1,9 @@
 package org.matthicks.mailgun
 
-import cats.effect.IO
 import fabric.io.JsonParser
 import fabric.rw._
 import moduload.Moduload
+import rapid.Task
 
 import java.nio.charset.StandardCharsets
 import java.util.Base64
@@ -25,7 +25,7 @@ class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
     .post
     .header(Headers.Request.Authorization(s"Basic $encodedKey"))
 
-  def send(message: Message): IO[MessageResponse] = {
+  def send(message: Message): Task[MessageResponse] = {
     var content: FormDataContent = FormDataContent
 
     def add(key: String, value: Any): Unit = {
@@ -107,12 +107,12 @@ class Mailgun(domain: String, apiKey: String, region: Option[String] = None) {
         case Success(response) =>
           (response.content match {
             case Some(content) => content.asString
-            case None => IO.pure("")
+            case None => Task.pure("")
           }).map { responseJson =>
             if (responseJson.isEmpty) throw new RuntimeException(s"No content received in response for ${client.url}.")
             JsonParser(responseJson).as[MessageResponse]
           }
-        case Failure(exception) => IO.raiseError(exception)
+        case Failure(exception) => Task.error(exception)
       }
   }
 }

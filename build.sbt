@@ -1,6 +1,6 @@
 name := "mailgun4s"
 organization := "com.outr"
-version := "1.2.3"
+version := "1.3.0"
 
 scalaVersion := "2.13.14"
 crossScalaVersions := List("2.13.14", "3.3.3")
@@ -28,5 +28,5 @@ ThisBuild / developers := List(
 run / fork := true
 
 libraryDependencies ++= Seq(
-  "com.outr" %% "spice-client-jvm" % "0.4.1"
+  "com.outr" %% "spice-client-jvm" % "0.7.1"
 )
