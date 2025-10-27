@@ -1,7 +1,5 @@
 package org.matthicks.mailgun
 
-import fabric.define.DefType
-import fabric._
 import fabric.rw.RW
 
 sealed trait TrackingClicks
@@ -9,10 +7,9 @@ sealed trait TrackingClicks
 object TrackingClicks {
   private lazy val map = Map("default" -> Default, "yes" -> Yes, "no" -> No, "htmlonly" -> HTMLOnly)
 
-  implicit val rw: RW[TrackingClicks] = RW.from(
-    r = _.getClass.getSimpleName.toLowerCase,
-    w = v => map(v.asStr.value),
-    d = DefType.Str
+  implicit val rw: RW[TrackingClicks] = RW.string(
+    asString = _.getClass.getSimpleName.toLowerCase,
+    fromString = s => map(s)
   )
 
   case object Default extends TrackingClicks
