@@ -9,9 +9,9 @@ val developerURL: String = "https://matthicks.com"
 
 name := projectName
 organization := org
-version := "1.4.1"
+version := "1.4.2"
 
-scalaVersion := "3.8.2"
+scalaVersion := "3.8.3"
 
 // Compiler flags
 scalacOptions ++= Seq("-deprecation", "-feature")
@@ -36,5 +36,5 @@ ThisBuild / developers := List(
 run / fork := true
 
 libraryDependencies ++= Seq(
-  "com.outr" %% "spice-client" % "1.2.2"
+  "com.outr" %% "spice-client" % "1.5.1"
 )
